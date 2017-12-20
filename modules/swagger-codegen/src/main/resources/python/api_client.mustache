@@ -204,14 +204,8 @@ class ApiClient(object):
         if isinstance(obj, dict):
             obj_dict = obj
         else:
-            # Convert model obj to dict except
-            # attributes `swagger_types`, `attribute_map`
-            # and attributes which value is not None.
-            # Convert attribute name to json key in
-            # model definition for request.
-            obj_dict = {obj.attribute_map[attr]: getattr(obj, attr)
-                        for attr, _ in six.iteritems(obj.swagger_types)
-                        if getattr(obj, attr) is not None}
+            # Convert model obj to dict.
+            obj_dict = obj.to_dict()
 
         return {key: self.sanitize_for_serialization(val)
                 for key, val in six.iteritems(obj_dict)}
@@ -605,8 +599,7 @@ class ApiClient(object):
         :return: model object.
         """
 
-        if not klass.swagger_types and not hasattr(klass,
-                                                   'get_real_child_model'):
+        if not hasattr(klass, 'swagger_types') and not hasattr(klass, 'get_real_child_model'):
             return data
 
         kwargs = {}
